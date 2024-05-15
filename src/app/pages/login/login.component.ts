@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, signal } from '@angular/core';
 
 import {MatButtonModule} from '@angular/material/button'
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../services/token.service';
+import { isPlatformServer } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -13,9 +14,15 @@ import { TokenService } from '../../services/token.service';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+  isServer = false;
   isUser = signal(false)
 
-  constructor(private auth: AuthService, private router: Router, private tokenService: TokenService){
+  constructor(
+    private auth: AuthService, 
+    private router: Router, 
+    private tokenService: TokenService,
+    @Inject(PLATFORM_ID) platformId: Object){
+      this.isServer = isPlatformServer(platformId);
     console.log('aqui')
     const userToken = this.tokenService.getToken()
     if(userToken){
